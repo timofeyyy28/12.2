@@ -53,7 +53,7 @@ namespace _12._2
                             Console.WriteLine("Распечатывание хэш-таблицы:");
                             myhashtable.PrintTable();
 
-                            AdditionalMenu(myhashtable); // Открываем сразу дополнительное меню после печати таблицы
+                            AdditionalMenu(myhashtable);
                         }
                         break;
 
@@ -70,6 +70,9 @@ namespace _12._2
 
         private static void AdditionalMenu(MyHashTable<Musicalinstrument> myhashtable)
         {
+            Musicalinstrument itemToDelete = null;
+            Musicalinstrument itemToFind = new Musicalinstrument();
+
             int answer = 0;
             while (answer != 3)
             {
@@ -83,47 +86,48 @@ namespace _12._2
                     Console.WriteLine("Неверный ввод. Повторите попытку.");
                     continue;
                 }
-
+                
                 switch (answer)
                 {
                     case 1:
-                        Console.WriteLine("Введите имя музыкального инструмента для поиска:");
-                        string name = Console.ReadLine();
-                        Console.WriteLine("Введите ID музыкального инструмента для поиска:");
-                        int idNumber;
-                        while (!int.TryParse(Console.ReadLine(), out idNumber))
+                        if (myhashtable != null)
                         {
-                            Console.WriteLine("Неверный формат ID. Пожалуйста, введите целое число:");
-                        }
-                        IdNumber id = new IdNumber(idNumber);
-                        Musicalinstrument itemToFind = new Musicalinstrument(name, id.number);
-
-                        if (myhashtable.Contains(itemToFind)) 
-                        {
-                            Console.WriteLine("Элемент найден.");
+                            Musicalinstrument itemForSearch = new Musicalinstrument();
+                            Console.WriteLine("Введите экземпляр, который хотите найти");
+                            itemForSearch.Init();
+                            Point<Musicalinstrument> point = myhashtable.SearchItem(itemForSearch);
+                            if (point != null)
+                                Console.WriteLine($"Экземпляр найден. {point}");
+                            else
+                                Console.WriteLine("Экземпляр не найден");
                         }
                         else
                         {
-                            Console.WriteLine("Элемент не найден.");
+                            Console.WriteLine("Сначала сформируйте хеш-таблицу.");
                         }
                         break;
 
                     case 2:
-                        Console.WriteLine("Введите элемент для удаления:");
-                        Musicalinstrument itemToDelete = new Musicalinstrument();
-                        // Логика удаления
-                        if (myhashtable.RemoveData(itemToDelete))
+                        if (itemToDelete != null)
                         {
-                            Console.WriteLine("Элемент успешно удален.");
+                            if (myhashtable.RemoveData(itemToDelete))
+                            {
+                                Console.WriteLine("Элемент успешно удален.");
+                                itemToDelete = null;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Элемент не найден в хэш-таблице.");
+                            }
                         }
                         else
                         {
-                            Console.WriteLine("Элемент не найден в хэш-таблице.");
+                            Console.WriteLine("Сначала выполните поиск элемента перед удалением.");
                         }
                         break;
 
                     case 3:
-                        Console.WriteLine("Основное меню.");
+                        Console.WriteLine("Возвращение в основное меню.");
                         break;
 
                     default:

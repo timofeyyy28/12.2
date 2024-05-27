@@ -1,5 +1,7 @@
-﻿using ClassLibraryLabor10;
-using System.Collections;
+﻿using System;
+using System.Collections.Generic;
+using ClassLibraryLabor10;
+
 namespace _12._2
 {
     internal class MyHashTable<T> where T : IInit, ICloneable, new()
@@ -10,6 +12,23 @@ namespace _12._2
         public MyHashTable(int length = 10)
         {
             table = new Point<T>[length];
+        }
+        public Point<T> SearchItem(T itemToFind)
+        {
+            int index = GetIndex(itemToFind);
+            if (table[index] == null)
+                return default;
+            else
+            {
+                while (true)
+                {
+                    if (table[index].Data.Equals(itemToFind))
+                        return table[index];
+                    table[index] = table[index].Next;
+                    if (table[index] == null)
+                        return default;
+                }
+            }
         }
 
         public void AddRandomItems(int elementsCount)
@@ -52,7 +71,7 @@ namespace _12._2
 
         public int GetIndex(T data)
         {
-            return Math.Abs(data.GetHashCode()) % Capacity;
+            return Math.Abs(data.GetHashCode()) % table.Length;
         }
 
         public void AddPoint(T data)
@@ -78,15 +97,15 @@ namespace _12._2
 
         public bool Contains(T data)
         {
-            int index = GetIndex(data);
-            if (table[index] == null)
+            if (table == null)
             {
                 Console.WriteLine("Хэш-таблица пуста.");
                 return false;
             }
 
-            if (table[index].Data.Equals(data))
-                return true;
+            int index = GetIndex(data);
+            if (table[index] == null)
+                return false;
 
             Point<T> current = table[index];
             while (current != null)

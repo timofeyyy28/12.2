@@ -36,14 +36,9 @@ namespace _12._2
             this.Next = null;
             this.Pred = null;
         }
-        public override string? ToString()
+        public override string ToString()
         {
             return Data == null ? "" : Data.ToString();
-        }
-        public override int GetHashCode()
-        {
-            return Data == null ? 0 : Data.GetHashCode();
-        }
-
+        }       
     }
 }
