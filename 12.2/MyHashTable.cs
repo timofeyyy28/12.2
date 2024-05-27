@@ -1,59 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClassLibraryLabor10;
-
+﻿using ClassLibraryLabor10;
+using System.Collections;
 namespace _12._2
 {
     internal class MyHashTable<T> where T : IInit, ICloneable, new()
     {
         Point<T>[] table;
         public int Capacity => table.Length;
+
         public MyHashTable(int length = 10)
         {
             table = new Point<T>[length];
         }
+
+        public void AddRandomItems(int elementsCount)
+        {
+            Random random = new Random();
+
+            for (int i = 0; i < elementsCount; i++)
+            {
+                T newItem = new T();
+                newItem.RandomInit();
+
+                AddPoint(newItem);
+            }
+        }
+
         public void PrintTable()
         {
+            Console.WriteLine("Содержимое хэш-таблицы:");
             for (int i = 0; i < table.Length; i++)
             {
-                Console.WriteLine($"{i}");
+                Console.Write($"Ячейка {i}: ");
+
                 if (table[i] != null)
                 {
                     Console.WriteLine(table[i].Data);
-                    if (table[i].Next != null)
+
+                    Point<T> current = table[i].Next;
+                    while (current != null)
                     {
-                        Point<T>? current = table[i].Next;
-                        while (current != null)
-                        {
-                            Console.WriteLine(current.Data);
-                            current = current.Next;
-                        }
+                        Console.WriteLine(current.Data);
+                        current = current.Next;
                     }
+                }
+                else
+                {
+                    Console.WriteLine("Пусто");
                 }
             }
         }
+
         public int GetIndex(T data)
         {
             return Math.Abs(data.GetHashCode()) % Capacity;
         }
-        public void AddPoint( T data) 
+
+        public void AddPoint(T data)
         {
             int index = GetIndex(data);
-            if  (table[index] == null)
+            if (table[index] == null)
             {
                 table[index] = new Point<T>(data);
-                table[index].Data = data;
             }
             else
             {
-                Point<T>? current = table[index];
+                Point<T> current = table[index];
                 while (current.Next != null)
                 {
-                    if (current.Equals(data))
+                    if (current.Data.Equals(data))
                         return;
                     current = current.Next;
                 }
@@ -61,30 +75,33 @@ namespace _12._2
                 current.Next.Pred = current;
             }
         }
+
         public bool Contains(T data)
         {
             int index = GetIndex(data);
-            if (table == null)
-                throw new Exception("empty table");
             if (table[index] == null)
+            {
+                Console.WriteLine("Хэш-таблица пуста.");
                 return false;
+            }
+
             if (table[index].Data.Equals(data))
                 return true;
-            else
+
+            Point<T> current = table[index];
+            while (current != null)
             {
-                Point<T>? current = table[index];
-            while (current!= null)
-                {
-                    if (current.Data.Equals(data))
-                        return true;
-                    current = current.Next;
-                }               
+                if (current.Data.Equals(data))
+                    return true;
+                current = current.Next;
             }
+
             return false;
         }
-        public bool RemoveData( T data )
+
+        public bool RemoveData(T data)
         {
-            Point<T>? current;
+            Point<T> current;
             int index = GetIndex(data);
             if (table[index] == null)
                 return false;
@@ -106,22 +123,20 @@ namespace _12._2
                 {
                     if (current.Data.Equals(data))
                     {
-                        Point<T>? pred = current.Pred;
-                        Point<T>? next = current.Next;
+                        Point<T> pred = current.Pred;
+                        Point<T> next = current.Next;
                         pred.Next = next;
                         current.Pred = null;
                         if (next != null)
                         {
                             next.Pred = pred;
-                        return true;                            
+                            return true;
                         }
-                        current = current.Next;
-                    }                  
+                    }
+                    current = current.Next;
                 }
                 return false;
             }
-        }    
-
-
+        }
     }
 }
