@@ -8,10 +8,28 @@ namespace _12._2
     {
         Point<T>[] table;
         public int Capacity => table.Length;
-
-        public MyHashTable(int length = 10)
+        private int size;
+        private int count;
+        public int Size
         {
-            table = new Point<T>[length];
+            get { return size; }
+            set
+            {
+                if (value > 100)
+                    size = 100;
+                else
+                {
+                    if (value > 0)
+                        size = value;
+                    else
+                        size = 1;
+                }
+            }
+        }
+        public MyHashTable(int size)
+        {
+            Size = size;
+            table = new Point<T>[Size];
         }
         public Point<T> SearchItem(T itemToFind)
         {
@@ -46,32 +64,35 @@ namespace _12._2
 
         public void PrintTable()
         {
-            Console.WriteLine("Содержимое хэш-таблицы:");
-            for (int i = 0; i < table.Length; i++)
+            if (table != null)
             {
-                Console.Write($"Ячейка {i}: ");
-
-                if (table[i] != null)
+                for (int i = 0; i < table.Length; i++)
                 {
-                    Console.WriteLine(table[i].Data);
-
-                    Point<T> current = table[i].Next;
-                    while (current != null)
+                    if (table[i] != null)
                     {
-                        Console.WriteLine(current.Data);
-                        current = current.Next;
+                        Console.WriteLine($"{i}: {table[i]}");
+                        if (table[i].Next != null)
+                        {
+                            Point<T> current = table[i].Next;
+                            while (current != null)
+                            {
+                                Console.WriteLine($"   {current.Data}");
+                                current = current.Next;
+                            }
+                        }
                     }
+                    else { Console.WriteLine($"{i}: Нет элемента"); }
                 }
-                else
-                {
-                    Console.WriteLine("Пусто");
-                }
+            }
+            else
+            {
+                throw new Exception("Таблица удалена");
             }
         }
 
-        public int GetIndex(T data)
+        public int GetIndex(T item)
         {
-            return Math.Abs(data.GetHashCode()) % table.Length;
+            return Math.Abs(item.GetHashCode()) % table.Length;
         }
 
         public void AddPoint(T data)
@@ -80,82 +101,84 @@ namespace _12._2
             if (table[index] == null)
             {
                 table[index] = new Point<T>(data);
+                table[index].Data = data;
+                count++;
             }
             else
             {
                 Point<T> current = table[index];
+                if (current.Data.Equals(data))
+                    return;
                 while (current.Next != null)
-                {
-                    if (current.Data.Equals(data))
-                        return;
+                {                   
                     current = current.Next;
                 }
                 current.Next = new Point<T>(data);
                 current.Next.Pred = current;
+                count++;
             }
         }
 
         public bool Contains(T data)
         {
-            if (table == null)
-            {
-                Console.WriteLine("Хэш-таблица пуста.");
-                return false;
-            }
-
             int index = GetIndex(data);
-            if (table[index] == null)
+            if (table == null)
+                throw new Exception("empty table");
+            if (table[index] == null) //цепочка пустая, элемента
                 return false;
-
-            Point<T> current = table[index];
-            while (current != null)
+            if (table[index].Data.Equals(data)) //попали на нужный
+                return true;
+            else
             {
-                if (current.Data.Equals(data))
-                    return true;
-                current = current.Next;
+                Point<T> current = table[index];//идем по цепочке
+                while (current != null)
+                {
+                    if (current.Data.Equals(data))
+                        return true;
+                    current = current.Next;
+                }
+                return false;
             }
-
-            return false;
         }
 
         public bool RemoveData(T data)
         {
-            Point<T> current;
+            if (table == null)
+                throw new Exception("empty table");
             int index = GetIndex(data);
             if (table[index] == null)
                 return false;
             if (table[index].Data.Equals(data))
             {
                 if (table[index].Next == null)
+                {
                     table[index] = null;
+                }
                 else
                 {
                     table[index] = table[index].Next;
                     table[index].Pred = null;
                 }
+                count--;
                 return true;
             }
-            else
+            Point<T> current = table[index];
+            while (current != null)
             {
-                current = table[index];
-                while (current != null)
+                if (current.Data.Equals(data))
                 {
-                    if (current.Data.Equals(data))
-                    {
-                        Point<T> pred = current.Pred;
-                        Point<T> next = current.Next;
-                        pred.Next = next;
-                        current.Pred = null;
-                        if (next != null)
-                        {
-                            next.Pred = pred;
-                            return true;
-                        }
-                    }
-                    current = current.Next;
+                    Point<T> pred = current.Pred;
+                    Point<T> next = current.Next;
+                    pred.Next = next;
+                    if (next != null)
+                        next.Pred = pred;
+                    current.Pred = null;
+                    count--;
+                    return true;
                 }
-                return false;
+                current = current.Next;
             }
+            return false;
         }
     }
 }

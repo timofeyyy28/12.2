@@ -31,16 +31,25 @@ namespace _12._2
                 switch (answer)
                 {
                     case 1:
-                        Console.WriteLine("Введите количество случайных элементов для добавления:");
-                        int elementsCount;
-                        if (!int.TryParse(Console.ReadLine(), out elementsCount))
+                        try
                         {
-                            Console.WriteLine("Неверный ввод числа элементов.");
-                            break;
+                            Console.Write("Введите количество ячеек: ");
+                            int length = int.Parse(Console.ReadLine());
+                            myhashtable = new MyHashTable<Musicalinstrument>(length);
+                            Console.Write("Введите элементов, которых хотите создать: ");
+                            int countOfElements = int.Parse(Console.ReadLine());
+                            for (int i = 0; i < countOfElements; i++)
+                            {
+                                Musicalinstrument mi = new Musicalinstrument();
+                                mi.RandomInit();
+                                myhashtable.AddPoint(mi);
+                            }
+                            Console.WriteLine("Хеш-таблица сформирована");
                         }
-                        myhashtable = new MyHashTable<Musicalinstrument>();
-                        myhashtable.AddRandomItems(elementsCount);
-                        Console.WriteLine("Хэш-таблица сформирована с случайными элементами.");
+                        catch
+                        {
+                            Console.WriteLine("Вы неправильно ввели данные о хеш-таблице.");
+                        }
                         break;
 
                     case 2:
@@ -70,7 +79,7 @@ namespace _12._2
 
         private static void AdditionalMenu(MyHashTable<Musicalinstrument> myhashtable)
         {
-            Musicalinstrument itemToDelete = null;
+            
             Musicalinstrument itemToFind = new Musicalinstrument();
 
             int answer = 0;
@@ -79,14 +88,15 @@ namespace _12._2
                 Console.WriteLine("Дополнительное меню:");
                 Console.WriteLine("1. Поиск элемента");
                 Console.WriteLine("2. Удаление элемента");
-                Console.WriteLine("3. Вернуться в основное меню");
+                Console.WriteLine("3. Добавление элемента");
+                Console.WriteLine("4. Вернуться в основное меню");
 
                 if (!int.TryParse(Console.ReadLine(), out answer))
                 {
                     Console.WriteLine("Неверный ввод. Повторите попытку.");
                     continue;
                 }
-                
+
                 switch (answer)
                 {
                     case 1:
@@ -99,7 +109,7 @@ namespace _12._2
                             if (point != null)
                                 Console.WriteLine($"Экземпляр найден. {point}");
                             else
-                                Console.WriteLine("Экземпляр не найден");
+                                Console.WriteLine("Экземпляр не найден.");
                         }
                         else
                         {
@@ -108,12 +118,15 @@ namespace _12._2
                         break;
 
                     case 2:
-                        if (itemToDelete != null)
+                        if (myhashtable != null)
                         {
+                            Musicalinstrument itemToDelete = new Musicalinstrument();
+                            Console.WriteLine("Введите экземпляр для удаления:");
+                            itemToDelete.Init();
+
                             if (myhashtable.RemoveData(itemToDelete))
                             {
                                 Console.WriteLine("Элемент успешно удален.");
-                                itemToDelete = null;
                             }
                             else
                             {
@@ -122,11 +135,25 @@ namespace _12._2
                         }
                         else
                         {
-                            Console.WriteLine("Сначала выполните поиск элемента перед удалением.");
+                            Console.WriteLine("Сначала сформируйте хэш-таблицу.");
                         }
                         break;
-
                     case 3:
+                        if (myhashtable != null)
+                        {
+                            Musicalinstrument itemToAdd = new Musicalinstrument();
+                            Console.WriteLine("Введите экземпляр, который хотите добавить");
+                            itemToAdd.Init();
+                            myhashtable.AddPoint(itemToAdd);
+                            Console.WriteLine("Экземпляр добавлен");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Сначала сформируйте хеш-таблицу.");
+                        }
+                        break;
+                        break;
+                    case 4:
                         Console.WriteLine("Возвращение в основное меню.");
                         break;
 
