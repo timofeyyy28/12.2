@@ -4,7 +4,7 @@ using ClassLibraryLabor10;
 
 namespace _12._2
 {
-    internal class MyHashTable<T> where T : IInit, ICloneable, new()
+    public class MyHashTable<T> where T : IInit, ICloneable, new()
     {
         Point<T>[] table;
         public int Capacity => table.Length;
@@ -49,18 +49,7 @@ namespace _12._2
             }
         }
 
-        public void AddRandomItems(int elementsCount)
-        {
-            Random random = new Random();
 
-            for (int i = 0; i < elementsCount; i++)
-            {
-                T newItem = new T();
-                newItem.RandomInit();
-
-                AddPoint(newItem);
-            }
-        }
 
         public void PrintTable()
         {
@@ -101,7 +90,7 @@ namespace _12._2
             if (table[index] == null)
             {
                 table[index] = new Point<T>(data);
-                table[index].Data = data;
+                table[index].Data = (T)data.Clone();
                 count++;
             }
             else
@@ -110,7 +99,7 @@ namespace _12._2
                 if (current.Data.Equals(data))
                     return;
                 while (current.Next != null)
-                {                   
+                {
                     current = current.Next;
                 }
                 current.Next = new Point<T>(data);
@@ -124,13 +113,13 @@ namespace _12._2
             int index = GetIndex(data);
             if (table == null)
                 throw new Exception("empty table");
-            if (table[index] == null) //цепочка пустая, элемента
+            if (table[index] == null)
                 return false;
-            if (table[index].Data.Equals(data)) //попали на нужный
+            if (table[index].Data.Equals(data))
                 return true;
             else
             {
-                Point<T> current = table[index];//идем по цепочке
+                Point<T> current = table[index];
                 while (current != null)
                 {
                     if (current.Data.Equals(data))

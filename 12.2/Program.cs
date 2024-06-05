@@ -9,7 +9,7 @@ namespace _12._2
         private static void PrintMenu()
         {
             Console.WriteLine("Меню:");
-            Console.WriteLine("1. Сформировать хэш-таблицу с случайными элементами");
+            Console.WriteLine("1. Сформировать хэш-таблицу со случайными элементами");
             Console.WriteLine("2. Распечатать полученную хэш-таблицу");
             Console.WriteLine("3. Выход");
         }
@@ -35,20 +35,32 @@ namespace _12._2
                         {
                             Console.Write("Введите количество ячеек: ");
                             int length = int.Parse(Console.ReadLine());
+
+                            
+                            if (length <= 0)
+                            {
+                                Console.WriteLine("Некорректный ввод. Количество ячеек должно быть больше 0.");
+                                break;
+                            }
+
                             myhashtable = new MyHashTable<Musicalinstrument>(length);
-                            Console.Write("Введите элементов, которых хотите создать: ");
+
+                            Console.Write("Введите количество элементов, которые вы хотите создать: ");
                             int countOfElements = int.Parse(Console.ReadLine());
                             for (int i = 0; i < countOfElements; i++)
                             {
                                 Musicalinstrument mi = new Musicalinstrument();
                                 mi.RandomInit();
                                 myhashtable.AddPoint(mi);
+                                mi.Name = "hhh";
+
                             }
-                            Console.WriteLine("Хеш-таблица сформирована");
+
+                            Console.WriteLine("Хеш-таблица создана.");
                         }
                         catch
                         {
-                            Console.WriteLine("Вы неправильно ввели данные о хеш-таблице.");
+                            Console.WriteLine("Некорректный ввод для создания хеш-таблицы.");
                         }
                         break;
 
@@ -79,11 +91,11 @@ namespace _12._2
 
         private static void AdditionalMenu(MyHashTable<Musicalinstrument> myhashtable)
         {
-            
+
             Musicalinstrument itemToFind = new Musicalinstrument();
 
             int answer = 0;
-            while (answer != 3)
+            while (answer != 4)
             {
                 Console.WriteLine("Дополнительное меню:");
                 Console.WriteLine("1. Поиск элемента");

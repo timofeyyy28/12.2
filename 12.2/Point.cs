@@ -7,7 +7,7 @@ using ClassLibraryLabor10;
 
 namespace _12._2
 {
-    internal class Point<T> where T : IInit, ICloneable, new()
+    public class Point<T> where T : IInit, ICloneable, new()
     {
         public T Data { get; set; }
         public Point<T>? Next { get; set; }
